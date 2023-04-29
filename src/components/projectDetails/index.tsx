@@ -55,7 +55,7 @@ export default function ProjectDetails({projectId}: ProjectDetailProps) {
     const [project, setProject] = React.useState<Project | undefined>()
 
     useEffect(() => {
-        if (projectId) {
+        if (projectId && project === undefined) {
           rtDispatch(
             getProject({
               callback: projectLoaded,
@@ -63,7 +63,7 @@ export default function ProjectDetails({projectId}: ProjectDetailProps) {
             }),
           )
         }
-    });
+    },[]);
 
     const projectLoaded = (project: Project | undefined) => {
         if (project) {

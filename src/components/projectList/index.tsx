@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MaterialReactTable, {
   type MRT_ColumnDef,
   type MRT_ColumnFiltersState,
@@ -25,10 +25,8 @@ type ProjectApiResponse = {
 const ProjectMaterialTable = () => {
   const navigate = useNavigate()
 
-  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-    [],
-  );
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  // const [globalFilter, setGlobalFilter] = useState('');
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -37,22 +35,23 @@ const ProjectMaterialTable = () => {
 
   const { data, isError, isFetching, isLoading, refetch } =
     useQuery<ProjectApiResponse>({
+      refetchOnWindowFocus: false,
       queryKey: [
         'table-data',
         columnFilters, //refetch when columnFilters changes
-        globalFilter, //refetch when globalFilter changes
+        // globalFilter, //refetch when globalFilter changes
         pagination.pageIndex, //refetch when pagination.pageIndex changes
         pagination.pageSize, //refetch when pagination.pageSize changes
         sorting, //refetch when sorting changes
       ],
       queryFn: async () => {
+
         const fetchURL = new URL(
           '/Project/Projects',
           API_BASE_URL
         );
         fetchURL.searchParams.set(
-          'start',
-          `${pagination.pageIndex * pagination.pageIndex}`,
+          'start', `${pagination.pageIndex}`,
         );
         fetchURL.searchParams.set('size', `${pagination.pageSize}`);
         fetchURL.searchParams.set(
@@ -122,7 +121,7 @@ const ProjectMaterialTable = () => {
       ]}
       state={{
         columnFilters,
-        globalFilter,
+        // globalFilter,
         isLoading,
         pagination,
         showAlertBanner: isError,
